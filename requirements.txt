@@ -1,0 +1,17 @@
+# Data Science Core
+pandas
+numpy
+
+# Data Visualization
+matplotlib
+seaborn
+
+# Machine Learning
+scikit-learn
+
+# Kaggle Dataset Download
+kagglehub
+
+# Jupyter Notebook
+jupyter
+ipykernel

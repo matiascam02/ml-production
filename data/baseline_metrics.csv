@@ -1,0 +1,6 @@
+Metric,Training,Validation
+Accuracy,0.8025925925925926,0.8027777777777778
+Precision,0.0,0.0
+Recall,0.0,0.0
+F1-Score,0.0,0.0
+ROC-AUC,0.5,0.5
