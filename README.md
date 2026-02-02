@@ -49,12 +49,14 @@ Reducing churn is highly valuable, as retaining an existing customer is estimate
 
 ### Evaluation Metrics
 
-We'll track multiple metrics since this is an imbalanced problem:
+Since customer churn is an imbalanced classification problem, multiple evaluation metrics are required:
 
-- **F1-Score** (primary) - balances precision and recall
-- **ROC-AUC** - overall model quality
-- **Recall** - we don't want to miss churners
-- **Precision** - avoid wasting resources on false alarms
+- **F1-Score** (primary) - Balances precision and recall, ensuring that churners are identified while avoiding excessive false positives.
+- **ROC-AUC** - Measures overall model discrimination performance.
+- **Recall** - Important to minimize the number of churners that are missed.
+- **Precision** - Helps control marketing costs by avoiding unnecessary retention efforts.
+
+The choice of metrics reflects the trade-off between retention effectiveness and marketing efficiency.
 
 ### Dataset
 
@@ -62,7 +64,8 @@ Source: [Kaggle - Online Retail Customer Churn](https://www.kaggle.com/datasets/
 
 - 9,000 customers
 - 17 features (demographics, purchases, engagement, etc.)
-- Split: 60% train / 20% validation / 20% test
+- Data Split: 60% train / 20% validation / 20% test
+- The test dataset will be kept untouched until the final evaluation, simulating real-world model deployment.
 
 ---
 
