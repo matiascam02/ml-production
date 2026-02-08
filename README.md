@@ -1,18 +1,18 @@
-# Customer Churn Prediction - GreenCart Europe
+# Customer Churn Prediction - EuroConnect Telecom
 
 ## A. Company Information
 
-**Company Name:** GreenCart Europe
+**Company Name:** EuroConnect Telecom
 
-**Product/Service:** Online e-commerce platform selling eco-friendly household and lifestyle products.
+**Product/Service:** Telecommunications provider offering phone service, internet (DSL and fiber optic), and streaming packages to residential customers.
 
-**Business Model:** B2C model - revenue from direct product sales plus a premium subscription (discounts + free delivery).
+**Business Model:** B2C subscription model - revenue from monthly service plans (phone, internet, TV/streaming) with month-to-month, one-year, and two-year contract options.
 
 **Size:** ~250 employees
 
-**Mission:** Make eco-friendly products accessible and affordable across Europe.
+**Mission:** Provide reliable and affordable telecom services across Europe.
 
-**Sector:** E-commerce / Retail / Sustainability
+**Sector:** Telecommunications
 
 **Location:** Berlin, Germany (HQ), operations across Europe
 
@@ -22,30 +22,30 @@
 
 ### The Problem
 
-GreenCart Europe is experiencing a high customer churn rate, with approximately 20% of customers stopping their purchases after a certain period. This negatively impacts revenue and long-term growth, as acquiring new customers is significantly more expensive than retaining existing ones.
+EuroConnect Telecom is experiencing a high customer churn rate, with approximately 27% of subscribers cancelling their services. This negatively impacts revenue and long-term growth, as acquiring new subscribers is significantly more expensive than retaining existing ones.
 
-The company wants to identify customers who are likely to churn in advance, so the marketing team can take proactive actions such as personalized promotions, retention campaigns, or subscription incentives.
+The company wants to identify customers who are likely to churn in advance, so the retention team can take proactive actions such as personalized offers, contract upgrades, or service improvements.
 
-A customer is considered churned if they stop making purchases for a defined period, as specified in the dataset.
+A customer is considered churned if they cancel all services with the company.
 
-Solving this problem will directly support GreenCart’s goal of increasing customer lifetime value and reducing marketing acquisition costs.
+Solving this problem will directly support EuroConnect's goal of increasing customer lifetime value and reducing acquisition costs.
 
 ### Business Metrics
 The main business metric impacted by this project is the customer churn rate.
 
 | Metric | Now | Goal |
 |--------|-----|------|
-| Churn Rate | ~20% | 10% |
+| Churn Rate | ~27% | 15% |
 | Customer Lifetime Value | baseline | +25% |
 
-Reducing churn is highly valuable, as retaining an existing customer is estimated to be 5–7 times cheaper than acquiring a new one.
+Reducing churn is highly valuable, as retaining an existing customer is estimated to be 5-7 times cheaper than acquiring a new one.
 
 ### ML Approach
 
 - **Learning Type:** Supervised learning
 - **Problem Type:** Binary classification
 - **Target Variable:** Churn (1 = churned, 0 = stayed)
-- **Features:** Demographics, purchase behavior, website engagement,and satisfaction
+- **Features:** Demographics, account info, service subscriptions, billing
 
 ### Evaluation Metrics
 
@@ -60,12 +60,13 @@ The choice of metrics reflects the trade-off between retention effectiveness and
 
 ### Dataset
 
-Source: [Kaggle - Online Retail Customer Churn](https://www.kaggle.com/datasets/sahilislam007/online-retail-customer-churn-prediction-dataset)
+Source: [Kaggle - Telco Customer Churn](https://www.kaggle.com/datasets/blastchar/telco-customer-churn)
 
-- 9,000 customers
-- 17 features (demographics, purchases, engagement, etc.)
-- Data Split: 60% train / 20% validation / 20% test
-- The test dataset will be kept untouched until the final evaluation, simulating real-world model deployment.
+- 7,043 customers
+- 20 features (demographics, account, services, billing)
+- ~26.5% churn rate
+- Data Split: 60% train / 20% validation / 20% test (stratified)
+- The test dataset is kept untouched until the final evaluation, simulating real-world model deployment.
 
 ---
 
@@ -74,30 +75,72 @@ Source: [Kaggle - Online Retail Customer Churn](https://www.kaggle.com/datasets/
 See `notebooks/exploratory_data_analysis.ipynb`
 
 Key findings:
-- ~20% churn rate (imbalanced classes, roughly 4:1)
-- No missing values
-- Mix of numerical and categorical features
-- Some features show correlation with churn (need to verify in notebook)
+- 26.5% churn rate (imbalanced classes, roughly 73:27)
+- 11 blank values in TotalCharges (new customers with tenure=0), filled with 0
+- Strongest churn predictors:
+  - **Contract type**: month-to-month customers churn at 42.7% vs 2.8% for two-year contracts
+  - **Tenure**: strong negative correlation (-0.35) — longer customers stay more
+  - **Internet service**: fiber optic customers churn at 41.9% vs 18.9% DSL
+  - **Monthly charges**: churners pay ~$15 more on average
+- Gender and phone service show no significant difference in churn rates
 
 ---
 
 ## D. Baseline Model
 
-The baseline just predicts the majority class (no churn) for everyone. It's the simplest possible model and gives us something to beat.
-
-**Results:**
+The baseline predicts the majority class (no churn) for everyone.
 
 | Metric | Train | Validation |
 |--------|-------|------------|
-| Accuracy | 80.3% | 80.3% |
+| Accuracy | 73.5% | 73.5% |
 | Precision | 0.0 | 0.0 |
 | Recall | 0.0 | 0.0 |
 | F1-Score | 0.0 | 0.0 |
 | ROC-AUC | 0.50 | 0.50 |
 
-The baseline gets ~80% accuracy just by always predicting "no churn" (since 80% of customers don't churn). But it's useless for actually finding churners - 0 recall means it never identifies anyone who will leave. This high accuracy is misleading, as it reflects the underlying class imbalance rather than predictive power. A ROC-AUC of 0.50 confirms that the model performs no better than random guessing.
+The baseline gets ~73% accuracy just by always predicting "no churn", but it never identifies anyone who will leave (0 recall). Any real model needs to beat ROC-AUC 0.50 and actually detect churners.
 
-Any real model needs to beat ROC-AUC 0.50 and actually detect some churners.
+---
+
+## E. Model Training
+
+See `notebooks/model_training.ipynb`
+
+Two models were trained with GridSearchCV (5-fold CV, F1 scoring):
+
+| Metric | Baseline | Logistic Regression | Random Forest |
+|--------|----------|---------------------|---------------|
+| Accuracy | 0.7346 | 0.7544 | **0.7601** |
+| Precision | 0.0000 | 0.5248 | **0.5335** |
+| Recall | 0.0000 | **0.7914** | 0.7674 |
+| F1-Score | 0.0000 | **0.6311** | 0.6294 |
+| ROC-AUC | 0.5000 | 0.8361 | **0.8381** |
+
+Both models significantly outperform the baseline. Logistic Regression is the recommended model for its interpretability and slightly better recall/F1.
+
+---
+
+## F. Google Cloud Storage
+
+- **Project:** `mlip-485615`
+- **Bucket:** `gs://greencart-churn-regression` (europe-west3)
+
+Bucket structure:
+```
+greencart-churn-regression/
+├── inputs/              # Raw data
+│   └── telco_customer_churn.csv
+├── artifacts/           # Trained models and preprocessor
+│   ├── preprocessor.joblib
+│   ├── logistic_regression.joblib
+│   └── random_forest.joblib
+└── outputs/             # Predictions and metrics
+    ├── training_metrics.csv
+    ├── model_comparison_metrics.csv
+    └── predictions.csv
+```
+
+IAM roles — see `docs/iam_permissions.pdf` for details.
 
 ---
 
@@ -106,15 +149,18 @@ Any real model needs to beat ROC-AUC 0.50 and actually detect some churners.
 ```
 ├── README.md
 ├── requirements.txt
+├── docs/
+│   └── iam_permissions.pdf
 ├── notebooks/
-│   └── exploratory_data_analysis.ipynb
+│   ├── exploratory_data_analysis.ipynb
+│   └── model_training.ipynb
 ├── src/
-│   ├── baseline.py
-│   └── utils.py
+│   ├── baseline.py        # Majority-class baseline model
+│   ├── utils.py            # Shared feature definitions and helpers
+│   ├── training.py         # Training pipeline (reads/writes GCS)
+│   └── inference.py        # Inference pipeline (reads/writes GCS)
 └── data/
-    ├── online_retail_churn.csv
-    ├── dataset_sample.csv
-    └── baseline_metrics.csv
+    └── telco_customer_churn.csv
 ```
 
 ## Setup
@@ -123,4 +169,12 @@ Any real model needs to beat ROC-AUC 0.50 and actually detect some churners.
 pip install -r requirements.txt
 ```
 
-Then run the notebook to download data and generate outputs.
+### Training
+```bash
+python src/training.py --model both
+```
+
+### Inference
+```bash
+python src/inference.py --model lr --input inputs/telco_customer_churn.csv
+```

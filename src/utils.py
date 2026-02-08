@@ -7,14 +7,16 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 
-# Features we use for modeling (excluding CustomerID and date columns)
-FEATURE_COLS = [
-    'Age', 'Gender', 'Annual_Income_USD', 'Spending_Score',
-    'Membership_Status', 'Preferred_Payment_Method', 'Region',
-    'Total_Purchases', 'Avg_Purchase_Value', 'Satisfaction_Score',
-    'Website_Visits_Last_Month', 'Avg_Time_Per_Visit_Minutes',
-    'Support_Tickets_Last_6_Months', 'Referred_Friends'
+# Features we use for modeling (Telco Customer Churn dataset)
+NUMERICAL_FEATURES = ['tenure', 'MonthlyCharges', 'TotalCharges']
+CATEGORICAL_FEATURES = [
+    'gender', 'SeniorCitizen', 'Partner', 'Dependents',
+    'PhoneService', 'MultipleLines', 'InternetService',
+    'OnlineSecurity', 'OnlineBackup', 'DeviceProtection',
+    'TechSupport', 'StreamingTV', 'StreamingMovies',
+    'Contract', 'PaperlessBilling', 'PaymentMethod'
 ]
+FEATURE_COLS = NUMERICAL_FEATURES + CATEGORICAL_FEATURES
 
 
 def load_data(file_path):

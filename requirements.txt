@@ -8,6 +8,10 @@ seaborn
 
 # Machine Learning
 scikit-learn
+joblib
+
+# Google Cloud Storage
+google-cloud-storage
 
 # Kaggle Dataset Download
 kagglehub
