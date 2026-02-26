@@ -1,0 +1,14 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile.inference'
+      - '-t'
+      - 'europe-west3-docker.pkg.dev/mlip-485615/churn-prediction/inference:2026-02-26'
+      - '-t'
+      - 'europe-west3-docker.pkg.dev/mlip-485615/churn-prediction/inference:latest'
+      - '.'
+images:
+  - 'europe-west3-docker.pkg.dev/mlip-485615/churn-prediction/inference:2026-02-26'
+  - 'europe-west3-docker.pkg.dev/mlip-485615/churn-prediction/inference:latest'

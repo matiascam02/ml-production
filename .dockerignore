@@ -1,0 +1,11 @@
+venv/
+.git/
+.claude/
+notebooks/
+data/
+docs/
+*.pdf
+*.ipynb
+__pycache__/
+*.pyc
+.DS_Store

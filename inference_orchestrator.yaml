@@ -1,0 +1,25 @@
+main:
+  steps:
+    - init:
+        assign:
+          - project_id: "mlip-485615"
+          - region: "europe-west3"
+          - inference_job: "churn-inference"
+
+    - run_inference:
+        call: googleapis.run.v1.namespaces.jobs.run
+        args:
+          name: ${"namespaces/" + project_id + "/jobs/" + inference_job}
+          location: ${region}
+        result: inference_execution
+
+    - check_inference:
+        call: sys.log
+        args:
+          text: ${"Inference job completed. Execution:" + inference_execution.metadata.name}
+          severity: INFO
+
+    - return_result:
+        return:
+          status: "Inference pipeline completed successfully"
+          execution: ${inference_execution.metadata.name}

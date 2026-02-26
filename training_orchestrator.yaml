@@ -1,0 +1,25 @@
+main:
+  steps:
+    - init:
+        assign:
+          - project_id: "mlip-485615"
+          - region: "europe-west3"
+          - training_job: "churn-training"
+
+    - run_training:
+        call: googleapis.run.v1.namespaces.jobs.run
+        args:
+          name: ${"namespaces/" + project_id + "/jobs/" + training_job}
+          location: ${region}
+        result: training_execution
+
+    - check_training:
+        call: sys.log
+        args:
+          text: ${"Training job completed. Execution:" + training_execution.metadata.name}
+          severity: INFO
+
+    - return_result:
+        return:
+          status: "Training pipeline completed successfully"
+          execution: ${training_execution.metadata.name}
